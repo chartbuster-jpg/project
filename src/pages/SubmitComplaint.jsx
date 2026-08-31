@@ -1,7 +1,8 @@
 import Navbar from "../components/Navbar"
-import { useState, useRef } from "react"
+import { useState, useRef, use } from "react"
 import { useNavigate } from "react-router-dom"
 import { getComplaints, saveComplaints } from "../data/mockData"
+import { useCallback } from "react"
 
 function SubmitComplaint() {
 
@@ -12,6 +13,8 @@ function SubmitComplaint() {
   const [language, setLanguage] = useState("en-IN")
   const [listening, setListening] = useState(false)
   const [error, setError] = useState("")
+
+  
 
   const recognitionRef = useRef(null)
 
@@ -144,8 +147,41 @@ function SubmitComplaint() {
     )
   }
 }
+  const fetchModelResponse = useCallback(async (prompt) => {
+    try {
+      const encodedPrompt = encodeURIComponent(prompt);
+      const response = await fetch(`http://localhost:8080/api/complaint/registerComplaint` , {
+          method: "POST",
+
+          headers: {
+                "Content-Type": "application/json"
+          },
+
+            body: JSON.stringify({
+                id : 1,
+                name : "Aryan",
+                problem : prompt
+            })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      console.log(response);
+      console.log("hello");
+  
+      const data = await response.json();
+      console.log(data);
+      return data;
+
+
+    } catch (error) {
+      return `Error: ${error.message}`;
+    }
+  }, []);
 
   const handleSubmit = (e) => {
+   
 
     e.preventDefault()
 
@@ -156,23 +192,29 @@ function SubmitComplaint() {
       return
     }
 
+    const data = fetchModelResponse(complaint);
+
+
+
+
+
     const existingComplaints = getComplaints()
 
     const newComplaint = {
 
       id: Date.now(),
 
-      title: complaint.substring(0, 40),
+      title: "apka_problemSOlver",
 
-      description: complaint,
+      description: data.problem,
 
-      category: "Pending AI Analysis",
+      category: "--",
 
-      department: "Pending Assignment",
+      department: data.department,
 
-      priority: "MEDIUM",
+      priority: data.severity,
 
-      status: "Submitted",
+      status: "submited",
 
       date: new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
@@ -180,21 +222,22 @@ function SubmitComplaint() {
         year: "numeric"
       }),
 
-      location: location,
+      location: data.location,
 
       language: language
     }
+  
+     
+     
+      alert("Complaint submitted successfully!")
+       navigate(`/complaints/${newComplaint.id}`)
+    
+    
 
-    const updatedComplaints = [
-      newComplaint,
-      ...existingComplaints
-    ]
 
-    saveComplaints(updatedComplaints)
+    
 
-    alert("Complaint submitted successfully!")
-
-    navigate(`/complaints/${newComplaint.id}`)
+   
   }
 
   return (

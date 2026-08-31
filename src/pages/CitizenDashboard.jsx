@@ -86,35 +86,35 @@ function CitizenDashboard() {
 
             {complaints.map(complaint => (
 
-              <Link
-  key={complaint.id}
-  to={`/complaints/${complaint.id}`}
-  className="border rounded-lg p-4 flex justify-between items-center hover:bg-gray-50"
->
+                            <Link
+                key={complaint.id}
+                to={`/complaints/${complaint.id}`}
+                className="border rounded-lg p-4 flex justify-between items-center hover:bg-gray-50"
+              >
 
-  <div>
-    <h3 className="font-semibold">
-      {complaint.title}
-    </h3>
+                <div>
+                  <h3 className="font-semibold">
+                    {complaint.title}
+                  </h3>
 
-    <p className="text-sm text-gray-500">
-      {complaint.category} • {complaint.date}
-    </p>
-  </div>
+                  <p className="text-sm text-gray-500">
+                    {complaint.category} • {complaint.date}
+                  </p>
+                </div>
 
-  <div className="text-right">
+                <div className="text-right">
 
-    <span className="text-sm font-medium">
-      {complaint.status}
-    </span>
+                  <span className="text-sm font-medium">
+                    {complaint.status}
+                  </span>
 
-    <p className="text-sm text-gray-500">
-      {complaint.priority}
-    </p>
+                  <p className="text-sm text-gray-500">
+                    {complaint.priority}
+                  </p>
 
-  </div>
+                </div>
 
-</Link>
+              </Link>
 
             ))}
 

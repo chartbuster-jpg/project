@@ -7,6 +7,9 @@ import ComplaintHistory from "./pages/ComplaintHistory"
 import ComplaintDetails from "./pages/ComplaintDetails"
 import OfficerDashboard from "./pages/OfficerDashboard"
 import Complaints from "./pages/Complaints"
+import Register from "./pages/Register"
+
+
 
 function App() {
 
@@ -18,13 +21,17 @@ function App() {
         {/* Default */}
         <Route
           path="/"
-          element={<Navigate to="/login" />}
+          element={<Navigate to="/register" />}
         />
 
         {/* Citizen */}
         <Route
           path="/login"
           element={<Login />}
+        />
+         <Route
+          path="/register"
+          element={<Register />}
         />
 
         <Route

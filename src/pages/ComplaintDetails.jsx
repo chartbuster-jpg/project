@@ -1,16 +1,48 @@
 import { Link, useParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import { getComplaints } from "../data/mockData"
+import { useEffect ,useState } from "react"
+
+
+
 
 function ComplaintDetails() {
 
   const { id } = useParams()
+ 
+  const [complaint, setComplaint] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const complaints = getComplaints()
+ 
+ useEffect(() => {
+  async function fetchData() {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/complaint/getComplaint2/${id}`
+      );
 
-const complaint = complaints.find(
-  item => item.id === Number(id)
-)
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setComplaint(data);
+
+    } catch (error) {
+      console.log("You have an error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+}, [id]);
+  if (loading) {
+  return <div>Loading...</div>;
+  }
 
   if (!complaint) {
     return (
@@ -245,5 +277,15 @@ const complaint = complaints.find(
     </div>
   )
 }
+
+//complaint = {
+// id 
+// title 
+// description 
+//category
+//department
+// location
+// date
+//priority }
 
 export default ComplaintDetails
