@@ -26,18 +26,18 @@ function OfficerDashboard() {
   ).length
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
 
-      <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between">
+      <nav className="site-nav bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
 
         <Link
           to="/officer"
           className="text-xl font-bold"
         >
-          CivicAI Officer
+          <span className="nav-brand-mark">PN</span> Problem Nivaran <span className="officer-label">Officer</span>
         </Link>
 
-        <div className="flex gap-6">
+        <div className="nav-links flex gap-6">
 
           <Link to="/officer">
             Dashboard
@@ -55,7 +55,7 @@ function OfficerDashboard() {
 
       </nav>
 
-      <main className="max-w-7xl mx-auto p-6">
+      <main className="p-6 max-w-7xl mx-auto">
 
         <h1 className="text-3xl font-bold">
           Officer Dashboard

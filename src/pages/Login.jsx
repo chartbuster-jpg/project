@@ -1,136 +1,59 @@
-import { useNavigate } from "react-router-dom"
-import { useState } from "react";
+import { useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+
 function Login() {
-  const[email , setEmail ] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  
-  const handleLogin = async (e) => {
-        e.preventDefault();
+  const { pathname } = useLocation()
+  const [mode, setMode] = useState(pathname === "/register" ? "register" : "login")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [role, setRole] = useState("citizen")
+  const [error, setError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate()
 
-        const response = await fetch("http://localhost:8080/api/auth/login", {
-            method: "POST",
+  const handleSubmit = async (event) => {
+    event.preventDefault(); setError(""); setSubmitting(true)
+    try {
+      const endpoint = mode === "login" ? "login" : "register"
+      const body = mode === "login" ? { email, password } : { name, email, password }
+      const response = await fetch(`http://localhost:8080/api/auth/${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      const data = await response.json()
+      if (data.success) {
+        localStorage.setItem("token", data.token)
+        navigate(role === "officer" ? "/officer" : "/dashboard")
+      }
+      else setError(data.message || "We could not complete your request. Please try again.")
+    } catch { setError("Unable to connect to the service. Please try again shortly.") }
+    finally { setSubmitting(false) }
+  }
+  const switchMode = (nextMode) => { setMode(nextMode); setError("") }
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        const data = await response.json();
-        console.log("Login response:", data);
-
-        // Save JWT token
-        localStorage.setItem("token", data.token);
-        if(data.success){
-          navigate(`/dashboard`);
-        }
-
-        // Login successful
-        console.log("Login successful");
-
-        console.log(data);
-    };
-
-    return (
-      <>
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-md w-96">
-          <h1 className="text-3xl font-bold text-center text-blue-700 mb-2">
-            Problem Nrakaran
-          </h1>
-         
-
-        
-          <form onSubmit={handleLogin}>
-            <label className="block mb-2 font-medium">
-               Email
-            </label>
-            <input
-                className=" w-full bg-blue-70  border rounded-lg px-4 py-2 mb-4"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <label className="block mb-2 font-medium">
-            Password
-            </label>
-            <input
-              className=" w-full bg-blue-70  border rounded-lg px-4 py-2 mb-4"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <button type="submit" className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800">
-              Login
-            </button>
-
-        </form>
-        </div>
-
-      </div>
-    </>
-    );
+  return <main className="auth-page">
+    <section className="auth-panel auth-panel--intro">
+      <div className="brand-mark">PN</div><p className="eyebrow">A better civic experience</p>
+      <h1>Every local problem deserves a clear path forward.</h1>
+      <p className="auth-intro-copy">Report, follow, and resolve civic concerns from one simple place.</p>
+      <div className="auth-features"><span>Voice-enabled reporting</span><span>Real-time tracking</span><span>Clear status updates</span></div>
+    </section>
+    <section className="auth-panel auth-panel--form"><div className="auth-card">
+      <div className="auth-card-heading"><p className="eyebrow">Problem Nivaran</p><h2>{mode === "login" ? "Welcome back" : "Create your account"}</h2><p>{mode === "login" ? "Sign in to track your complaints." : "Join to report issues in your community."}</p></div>
+      <div className="auth-tabs" role="tablist" aria-label="Authentication options"><button className={mode === "login" ? "is-active" : ""} onClick={() => switchMode("login")} type="button">Sign in</button><button className={mode === "register" ? "is-active" : ""} onClick={() => switchMode("register")} type="button">Register</button></div>
+      <form onSubmit={handleSubmit} className="auth-form">
+        {mode === "register" && <label>Full name<input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required /></label>}
+        <label>Continue as
+          <span className="select-field">
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="citizen">Citizen</option>
+              <option value="officer">Officer</option>
+            </select>
+          </span>
+        </label>
+        <label>Email address<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required /></label>
+        <label>Password<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required /></label>
+        {error && <p className="form-error" role="alert">{error}</p>}<button className="auth-submit" type="submit" disabled={submitting}>{submitting ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}</button>
+      </form>
+    </div></section>
+  </main>
 }
-
-export default Login;
-//   const navigate = useNavigate()
-
-//   const handleLogin = () => {
-//     navigate("/dashboard")
-//   }
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
-//       <div className="bg-white p-8 rounded-xl shadow-md w-96">
-
-//         <h1 className="text-3xl font-bold text-center text-blue-700 mb-2">
-//           CivicAI
-//         </h1>
-
-//         <p className="text-center text-gray-500 mb-6">
-//           Smart Grievance System
-//         </p>
-
-//         <label className="block mb-2 font-medium">
-//           Email
-//         </label>
-
-//         <input
-//           type="email"
-//           placeholder="Enter email"
-//           className="w-full border rounded-lg px-4 py-2 mb-4"
-//         />
-
-//         <label className="block mb-2 font-medium">
-//           Password
-//         </label>
-
-//         <input
-//           type="password"
-//           placeholder="Enter password"
-//           className="w-full border rounded-lg px-4 py-2 mb-6"
-//         />
-
-//         <button
-//           onClick={handleLogin}
-//           className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800"
-//         >
-//           Login
-//         </button>
-
-//       </div>
-
-//     </div>
-//   )
-// }
-
-// export default Login
+export default Login

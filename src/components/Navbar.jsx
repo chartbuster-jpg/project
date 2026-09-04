@@ -10,13 +10,13 @@ function Navbar() {
     navigate("/login");
   };
   return (
-    <nav className="bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
+    <nav className="site-nav bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
       
       <Link to="/dashboard" className="text-xl font-bold">
-        CivicAI
+        <span className="nav-brand-mark">PN</span> Problem Nivaran
       </Link>
 
-      <div className="flex gap-6">
+      <div className="nav-links flex gap-6">
         <Link to="/dashboard" className="hover:text-blue-200">
           Dashboard
         </Link>
