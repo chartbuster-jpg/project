@@ -483,6 +483,15 @@ textarea {
     font-size: .86rem;
 }
 
+.officer-page-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+.officer-page-heading .eyebrow { color: #1769aa; }
+.officer-page-heading h1 { margin-top: 0; }
+.complaint-count { flex: 0 0 auto; margin-bottom: 1.5rem; padding: .52rem .8rem; border: 1px solid #cde4f6; border-radius: 999px; color: #1769aa; background: #edf8ff; font-size: .82rem; font-weight: 800; }
+.officer-table-card { border-top: 3px solid #2d7dd2; }
+.officer-table-card td:first-child a { display: inline-flex; padding: .28rem .48rem; border-radius: 7px; color: #1769aa; background: #eef8ff; font-size: .84rem; }
+.officer-table-card tbody tr { transition: background .18s ease; }
+.officer-table-card td { padding-top: 1.1rem !important; padding-bottom: 1.1rem !important; }
+
 @media (max-width: 760px) {
     .auth-page {
         grid-template-columns: 1fr;
@@ -523,4 +532,7 @@ textarea {
     nav.bg-gray-900>div a {
         white-space: nowrap;
     }
+
+    .officer-page-heading { align-items: start; flex-direction: column; }
+    .complaint-count { margin: -1rem 0 1.5rem; }
 }

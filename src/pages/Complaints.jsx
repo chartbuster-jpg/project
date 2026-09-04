@@ -4,18 +4,18 @@ import { complaints } from "../data/mockData"
 function Complaints() {
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
 
-      <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between">
+      <nav className="site-nav bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
 
         <Link
           to="/officer"
           className="text-xl font-bold"
         >
-          CivicAI Officer
+          <span className="nav-brand-mark">PN</span> Problem Nivaran <span className="officer-label">Officer</span>
         </Link>
 
-        <div className="flex gap-6">
+        <div className="nav-links flex gap-6">
 
           <Link to="/officer">
             Dashboard
@@ -33,17 +33,18 @@ function Complaints() {
 
       </nav>
 
-      <main className="max-w-7xl mx-auto p-6">
+      <main className="officer-complaints p-6 max-w-7xl mx-auto">
 
-        <h1 className="text-3xl font-bold mb-2">
-          All Complaints
-        </h1>
+        <div className="officer-page-heading">
+          <div>
+            <p className="eyebrow">Operations overview</p>
+            <h1 className="text-3xl font-bold mb-2">All Complaints</h1>
+            <p className="text-gray-500 mb-6">Review and manage citizen complaints in one place.</p>
+          </div>
+          <div className="complaint-count">{complaints.length} total</div>
+        </div>
 
-        <p className="text-gray-500 mb-6">
-          Review and manage citizen complaints
-        </p>
-
-        <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="officer-table-card bg-white rounded-xl shadow overflow-hidden">
 
           <table className="w-full">
 
