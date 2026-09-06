@@ -7,6 +7,9 @@ import ComplaintHistory from "./pages/ComplaintHistory"
 import ComplaintDetails from "./pages/ComplaintDetails"
 import OfficerDashboard from "./pages/OfficerDashboard"
 import Complaints from "./pages/Complaints"
+import Register from "./pages/Register"
+import OfficerLoginPage from "./pages/OfficerLoginPage"
+import AdminComplaintDetails from "./pages/AdminComplaintDetails"
 
 function App() {
 
@@ -30,10 +33,18 @@ function App() {
           path="/register"
           element={<Login />}
         />
+        <Route
+          path="/officerLogin"
+          element={<OfficerLoginPage />}
+        />
 
         <Route
           path="/dashboard"
           element={<CitizenDashboard />}
+        />
+         <Route
+          path="/AdminComplaintDetails/:id"
+          element={<AdminComplaintDetails />}
         />
 
         <Route

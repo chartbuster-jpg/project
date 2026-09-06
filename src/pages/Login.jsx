@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-
+import { Link } from "react-router-dom"
+import { API_URL } from "../api/api";
 function Login() {
   const { pathname } = useLocation()
   const [mode, setMode] = useState(pathname === "/register" ? "register" : "login")
@@ -17,11 +18,11 @@ function Login() {
     try {
       const endpoint = mode === "login" ? "login" : "register"
       const body = mode === "login" ? { email, password } : { name, email, password }
-      const response = await fetch(`http://localhost:8080/api/auth/${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      const response = await fetch(`${API_URL}/api/auth/${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
       const data = await response.json()
       if (data.success) {
         localStorage.setItem("token", data.token)
-        navigate(role === "officer" ? "/officer" : "/dashboard")
+        navigate("/dashboard")
       }
       else setError(data.message || "We could not complete your request. Please try again.")
     } catch { setError("Unable to connect to the service. Please try again shortly.") }
@@ -41,18 +42,23 @@ function Login() {
       <div className="auth-tabs" role="tablist" aria-label="Authentication options"><button className={mode === "login" ? "is-active" : ""} onClick={() => switchMode("login")} type="button">Sign in</button><button className={mode === "register" ? "is-active" : ""} onClick={() => switchMode("register")} type="button">Register</button></div>
       <form onSubmit={handleSubmit} className="auth-form">
         {mode === "register" && <label>Full name<input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required /></label>}
-        <label>Continue as
+        {/* <label>Continue as
           <span className="select-field">
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="citizen">Citizen</option>
               <option value="officer">Officer</option>
             </select>
           </span>
-        </label>
+        </label> */}
         <label>Email address<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required /></label>
         <label>Password<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required /></label>
         {error && <p className="form-error" role="alert">{error}</p>}<button className="auth-submit" type="submit" disabled={submitting}>{submitting ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}</button>
+        
       </form>
+      <div className=" py-3  justify-center  hover:bg-gray-50">
+          <Link to="/officerLogin" className=" block border rounded-lg shadow-md py-2 text-center   justify-center align-middle hover:bg-gray-50">Login as Admin</Link>
+      </div>
+      
     </div></section>
   </main>
 }

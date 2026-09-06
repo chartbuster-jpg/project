@@ -1,9 +1,54 @@
 import { Link } from "react-router-dom"
-import { complaints } from "../data/mockData"
+
+import {  createContext , useEffect  , useState } from "react";
+import { useComplaints } from "../pages/ComplaintContext";
+import { API_URL } from "../api/api";
 
 function OfficerDashboard() {
 
-  const total = complaints.length
+     
+ 
+
+  const [loading, setLoading] = useState(true);
+  const { complaints, setComplaints } = useComplaints();
+ 
+ useEffect(() => {
+  async function fetchData() {
+    try {
+      const token = localStorage.getItem("token1");
+      const response = await fetch(
+        `${API_URL}/api/adminInfo/complaints`,{
+          method: "GET",
+           headers: {
+            "Authorization": `Bearer ${token}`
+          }
+
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setComplaints(data.complaintResponses);
+
+    } catch (error) {
+      console.log("You have an error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+}, [setComplaints]);
+  if (loading) {
+  return <div>Loading...</div>;
+  }else{
+    const total = complaints.length
 
   const submitted = complaints.filter(
     complaint => complaint.status === "Submitted"
@@ -145,8 +190,8 @@ function OfficerDashboard() {
             {complaints.map(complaint => (
 
               <Link
-                key={complaint.id}
-                to={`/complaints/${complaint.id}`}
+                key={complaint.incidentId}
+                to={`/AdminComplaintDetails/${complaint.incidentId}`}
                 className="block border rounded-lg p-4 hover:bg-gray-50"
               >
 
@@ -155,12 +200,12 @@ function OfficerDashboard() {
                   <div>
 
                     <p className="font-semibold">
-                      #{complaint.id} - {complaint.title}
+                      #{complaint.incidentId} - {complaint.title}
                     </p>
 
-                    <p className="text-sm text-gray-500">
+                    {/* <p className="text-sm text-gray-500">
                       {complaint.category} • {complaint.department}
-                    </p>
+                    </p> */}
 
                   </div>
 
@@ -171,7 +216,7 @@ function OfficerDashboard() {
                     </p>
 
                     <p className="text-sm text-gray-500">
-                      Priority: {complaint.priority}
+                      Priority: {complaint.severity}
                     </p>
 
                   </div>
@@ -190,6 +235,6 @@ function OfficerDashboard() {
 
     </div>
   )
-}
+}}
 
 export default OfficerDashboard
