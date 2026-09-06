@@ -3,6 +3,7 @@ import { useState, useRef, use } from "react"
 import { useNavigate } from "react-router-dom"
 import { getComplaints, saveComplaints } from "../data/mockData"
 import { useCallback } from "react"
+import { API_URL } from "../api/api";
 
 function SubmitComplaint() {
   const token = localStorage.getItem("token");
@@ -10,10 +11,12 @@ function SubmitComplaint() {
   const navigate = useNavigate()
 
   const [complaint, setComplaint] = useState("")
+  const [data, setData] = useState(null)
   const [location, setLocation] = useState("")
   const [language, setLanguage] = useState("en-IN")
   const [listening, setListening] = useState(false)
   const [error, setError] = useState("")
+  const [loading, setLoading] = useState("");
 
   
 
@@ -152,7 +155,7 @@ function SubmitComplaint() {
     try {
      
       const encodedPrompt = encodeURIComponent(prompt);
-      const response = await fetch(`http://localhost:8080/api/complaint/registerComplaint` , {
+      const response = await fetch(`${API_URL}/api/complaint/registerComplaint` , {
           method: "POST",
 
           headers: {
@@ -161,7 +164,8 @@ function SubmitComplaint() {
           },
 
             body: JSON.stringify({
-               problem : prompt
+               problem : prompt,
+               location : location
             })
       });
       
@@ -171,7 +175,8 @@ function SubmitComplaint() {
       console.log(response);
       console.log("hello");
   
-      const data = await response.json();
+      const tempdata = await response.json();
+      setData(tempdata);
       console.log(data);
       return data;
 
@@ -179,9 +184,13 @@ function SubmitComplaint() {
     } catch (error) {
       return `Error: ${error.message}`;
     }
+    finally {
+      setLoading("loaded");
+    }
   }, []);
 
   const handleSubmit = (e) => {
+    setLoading("loading...");
    
 
     e.preventDefault()
@@ -190,6 +199,10 @@ function SubmitComplaint() {
 
       alert("Please enter or speak your complaint.")
 
+      return
+    }
+    if(loading === "loading..."){
+      alert("Please wait while your complaint is being processed.")
       return
     }
 
@@ -230,15 +243,20 @@ function SubmitComplaint() {
   
      
      
-      alert("Complaint submitted successfully!")
-       navigate(`/complaints/${newComplaint.id}`)
-    
-    
+      
+      
 
 
     
 
    
+     
+  }
+ 
+  if(data){
+        
+    navigate(`/complaints/${data.complaintId}`);
+    
   }
 
   return (
@@ -379,6 +397,16 @@ function SubmitComplaint() {
           </button>
 
         </form>
+
+        <div>
+          {loading && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-700 text-center">
+                {loading}
+              </p>
+            </div>
+          )}
+        </div>
 
       </main>
 

@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar"
 import { getComplaints } from "../data/mockData"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { API_URL } from "../api/api";
 
 function ComplaintHistory() {
   const [complaints, setComplaints] = useState(getComplaints())

@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import { getComplaints } from "../data/mockData"
 import { useEffect ,useState } from "react"
+import { API_URL } from "../api/api";
 
 
 
@@ -13,13 +14,15 @@ function ComplaintDetails() {
   const [complaint, setComplaint] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
+  const[proof , setProof] = useState(null);
+  
  
  useEffect(() => {
   async function fetchData() {
     try {
       
       const response = await fetch(
-        `http://localhost:8080/api/complaint/my/${id}`,{
+        `${API_URL}/api/complaint/my/${id}`,{
           method: "GET",
            headers: {
             "Authorization": `Bearer ${token}`
@@ -47,6 +50,29 @@ function ComplaintDetails() {
 
   fetchData();
 }, [id]);
+
+const getImage = async () => {
+  try {
+    const response = await fetch(
+      `${API_URL}/api/complaint/${complaint.incidentId}/evidence` , {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    )
+
+    if(response.ok){
+      const blob = await response.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      setProof(imageUrl);
+
+    }
+
+  }catch (error) {
+    console.log("Error fetching image :" , error);
+  }
+}
   if (loading) {
   return <div>Loading...</div>;
   }
@@ -197,8 +223,8 @@ function ComplaintDetails() {
               <div className="flex gap-3">
                 <div
                   className={`w-4 h-4 rounded-full mt-1 ${
-                    complaint.status === "In Progress" ||
-                    complaint.status === "Resolved"
+                    complaint.status === "IN_PROGRESS" ||
+                    complaint.status === "RESOLVED"
                       ? "bg-green-500"
                       : "bg-gray-300"
                   }`}
@@ -217,7 +243,7 @@ function ComplaintDetails() {
               <div className="flex gap-3">
                 <div
                   className={`w-4 h-4 rounded-full mt-1 ${
-                    complaint.status === "Resolved"
+                    complaint.status === "RESOLVED"
                       ? "bg-green-500"
                       : "bg-gray-300"
                   }`}
@@ -239,8 +265,35 @@ function ComplaintDetails() {
 
         </div>
 
+        <div className=" py-3 flex justify-center items-center ">
+          <div className=" bg-cyan-200  rounded-2xl ">
+            <button
+          onClick={getImage}
+          className="flex flex-col items-center  gap-3  p-3"
+        >
+          
+
+          <span className="font-medium text-black">
+            Proof of Work
+          </span>
+        </button>
+            
+          </div>
+          {proof && (
+            <img
+              src={proof}
+              alt="Resolution Evidence"
+              className="w-100 py-3 h-100 object-contain rounded-lg border border-gray-300 shadow-md text-center"
+            />
+          )}
+          
+
+        </div>
+     
+
         {/* AI information */}
         <div className="bg-blue-50 rounded-xl p-6 mt-6">
+
 
           <h2 className="text-xl font-bold mb-4">
             AI Analysis
